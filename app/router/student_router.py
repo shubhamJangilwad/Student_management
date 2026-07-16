@@ -6,7 +6,8 @@ from app.service.student_service import (create_student ,
                                      show_students,
                                      get_one ,
                                      update_student,
-                                     delete_student)
+                                     delete_student,
+                                     get_stu_details_service)
 
 Student_Router = APIRouter()
 
@@ -30,3 +31,7 @@ def update_student_id(id : int, body : StudentReqCreate , db : Session = Depends
 @Student_Router.delete("/delete/student/{id}")
 def delete_student_id(id:int , db : Session = Depends(get_db)):
     return delete_student(db, id)
+
+@Student_Router.get("/get/stu/det/{id}")
+def get_stu_details(id:int,db : Session = Depends(get_db)):
+    return get_stu_details_service(id,db)

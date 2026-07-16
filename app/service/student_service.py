@@ -1,4 +1,5 @@
 from app.model.student_model import Student
+from app.model.course_model import Course
 from fastapi import HTTPException
 
 def create_student(db,body):
@@ -44,3 +45,29 @@ def delete_student(db,id):
     return {
         "message" : "student deleted successfully"
     }
+
+def get_stu_details_service(id,db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name
+
+        ).join(
+            Course,
+            Student.id == Course.student_id
+        ).filter(Student.id == id)
+
+    )
+
+    result = query.all()
+
+    print("________________________",result)
+    responce = []
+
+    for row in result:
+        responce.append({
+            "student_name":row.name,
+            "course_name" : row.course_name
+        })
+    return responce
+    
