@@ -1,6 +1,6 @@
 from pydantic import BaseModel , ConfigDict
 
-class StudentCreate(BaseModel):
+class StudentReqCreate(BaseModel):
     name : str
     age : int
 

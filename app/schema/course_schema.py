@@ -1,6 +1,6 @@
 from pydantic import BaseModel , ConfigDict
 
-class CourseCreate(BaseModel):
+class CourseReqCreate(BaseModel):
     course_name : str
    
 

@@ -1,11 +1,11 @@
-from model.student_model import Student
+from app.model.student_model import Student
 from fastapi import HTTPException
 
-def create_student(db,student_data):
+def create_student(db,body):
 
     db_student = Student(
-        name = student_data.name,
-        age = student_data.age
+        name = body.name,
+        age = body.age
     )
 
     db.add(db_student)
@@ -21,11 +21,11 @@ def get_one(db,id):
     get_one_student = db.query(Student).filter(Student.id == id).first()
     return get_one_student
 
-def update_student(db,id,student):
+def update_student(db,id,body):
     update_student_by_id = db.query(Student).filter(Student.id == id).first()
     print("_____________________",update_student_by_id)
-    update_student_by_id.name = student.name,
-    update_student_by_id.age = student.age
+    update_student_by_id.name = body.name,
+    update_student_by_id.age = body.age
 
     db.commit()
     return update_student_by_id

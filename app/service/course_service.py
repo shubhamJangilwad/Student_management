@@ -1,8 +1,8 @@
-from model.course_model import Course
-from model.student_model import Student
+from app.model.course_model import Course
+from app.model.student_model import Student
 from fastapi import HTTPException
 
-def create_course(db,course_data,student_id):
+def create_course(db,body,student_id):
 
 
     creating_course = db.query(Student).filter(Student.id == student_id).first()
@@ -15,7 +15,7 @@ def create_course(db,course_data,student_id):
       
     else:
              db_course = Course(
-            course_name = course_data.course_name,
+            course_name = body.course_name,
             student_id = student_id
 
         )
@@ -32,10 +32,10 @@ def get_one(db,id):
     get_one_course = db.query(Course).filter(Course.id == id).first()
     return get_one_course
 
-def update_course(db,id,course_data):
+def update_course(db,id,body):
     update_course_db = db.query(Course).filter(Course.id == id).first()
     print("_____________________",update_course_db)
-    update_course_db.course_name = course_data.course_name
+    update_course_db.course_name = body.course_name
 
     db.commit()
     return update_course_db
