@@ -1,5 +1,6 @@
 from app.model.student_model import Student
 from app.model.course_model import Course
+from app.model.teacher_model import Teacher
 from fastapi import HTTPException
 
 def create_student(db,body):
@@ -70,4 +71,69 @@ def get_stu_details_service(id,db):
             "course_name" : row.course_name
         })
     return responce
+
+def get_all_stu_service(db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name
+        ).outerjoin(
+            Course,
+            Student.id == Course.student_id
+        )
+    )
+    result = query.all()
+    print("________________________",result)
+    
+
+    responce = []
+    for row in result:
+        responce.append({
+            "student_name" : row.name,
+            "course_name" : row.course_name
+        })
+    return responce
+
+
+def get_stu_tea_cour_service(db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name,
+            Teacher.teacher_name
+        ).join(
+            Course,
+            Student.id == Course.student_id
+        ).join(
+            Teacher,
+            Teacher.id == Course.teacher_id
+        )
+    )
+    result = query.all()
+
+    responce = []
+    for row in result:
+        responce.append({
+            "student_name": row.name,
+            "course_name": row.course_name,
+            "teacher_name": row.teacher_name
+        })
+    
+    return responce
+
+def get_stu_cour_service(id,db):
+    print("Service called")
+    query = db.query(Student).filter(Student.id == id).first()
+
+    print("_____________",query)
+    print(type(query))
+
+    if query is None:
+        return {"message": "student not found"}
+    
+    return {
+        "name": query.name,
+        "courses": {course.course_name for course in query.courses}
+    }
+
     

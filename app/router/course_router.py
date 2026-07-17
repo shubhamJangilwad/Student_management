@@ -11,9 +11,9 @@ from sqlalchemy.orm import Session
 Course_Router = APIRouter()
 
 
-@Course_Router.post("/create/course/{student_id}" , response_model=CourseResponse)
-def add_course(body : CourseReqCreate , student_id : int,  db : Session = Depends(get_db)):
-    return create_course(db,body,student_id)
+@Course_Router.post("/create/course" , response_model=CourseResponse)
+def add_course(body : CourseReqCreate, db : Session = Depends(get_db)):
+    return create_course(db,body)
 
 @Course_Router.get("/show/courses")
 def get_course(db : Session = Depends(get_db)):

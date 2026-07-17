@@ -1,24 +1,28 @@
 from app.model.course_model import Course
 from app.model.student_model import Student
+from app.model.teacher_model import Teacher
 from fastapi import HTTPException
 
-def create_course(db,body,student_id):
+def create_course(db,body):
 
 
-    creating_course = db.query(Student).filter(Student.id == student_id).first()
+    # creating_course = db.query(Student
+    #                            ,Teacher).filter(Student.id == body.student_id,
+    #                                             Teacher.id == body.teacher_id).first()
 
-    if creating_course is None :
-         raise HTTPException(
-             status_code= 404,
-             detail= "Student Not found"
-         )
+    # if creating_course is None :
+    #      raise HTTPException(
+    #          status_code= 404,
+    #          detail= "Student Not found"
+    #      )
       
-    else:
-             db_course = Course(
-            course_name = body.course_name,
-            student_id = student_id
+    # else:
+    db_course = Course(
+    course_name = body.course_name,
+    student_id = body.student_id,
+    teacher_id = body.teacher_id
 
-        )
+    )
     db.add(db_course)
     db.commit()
 
