@@ -10,7 +10,10 @@ from app.service.student_service import (create_student ,
                                      get_stu_details_service,
                                      get_all_stu_service,
                                      get_stu_tea_cour_service,
-                                     get_stu_cour_service)
+                                     get_stu_cour_service,
+                                     get_stu_del_exl_service)
+from app.exports.excel import stu_cou_tech_excel_service
+from app.exports.pdf import stu_cou_tech_pdf_service
 
 Student_Router = APIRouter()
 
@@ -51,3 +54,15 @@ def get_stu_tea_cour(db:Session = Depends(get_db)):
 def get_stu_cour(id:int,db:Session = Depends(get_db)):
     print("Router called")
     return get_stu_cour_service(id,db)
+
+@Student_Router.get("/stu/del/exl")
+def get_stu_del_exl(db:Session = Depends(get_db)):
+    return get_stu_del_exl_service(db)
+
+@Student_Router.get("/get/stu/cou/tech/excel")
+def get_stu_cou_tech_excel(db:Session = Depends(get_db)):
+    return stu_cou_tech_excel_service(db)
+
+@Student_Router.get("/get/stu/cou/tech/pdf")
+def get_stu_cou_tech_pdf(db:Session = Depends(get_db)):
+    return stu_cou_tech_pdf_service(db)

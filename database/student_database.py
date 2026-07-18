@@ -1,7 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker , declarative_base 
+from config.settings import (DB_HOST,
+                             DB_NAME,
+                             DB_PASSWORD,
+                             DB_PORT,
+                             DB_USER)
 
-DATABASE_URL = "postgresql://postgres:12345@localhost:5432/student_db"
+DATABASE_URL = DATABASE_URL = (
+    f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
 
 engine = create_engine(DATABASE_URL)
 

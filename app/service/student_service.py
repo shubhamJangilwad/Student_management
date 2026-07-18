@@ -2,6 +2,8 @@ from app.model.student_model import Student
 from app.model.course_model import Course
 from app.model.teacher_model import Teacher
 from fastapi import HTTPException
+from openpyxl import Workbook
+from fastapi.responses import FileResponse
 
 def create_student(db,body):
 
@@ -136,4 +138,37 @@ def get_stu_cour_service(id,db):
         "courses": {course.course_name for course in query.courses}
     }
 
-    
+def get_stu_del_exl_service(db):
+    wb = Workbook()
+    sheet = wb.active
+
+    sheet.title = "Students"
+
+    sheet["A1"] = "Id"
+    sheet["B1"] = "Name"
+    sheet["C1"] =  "Age"
+
+    students = db.query(Student).all() #it is a object that contais students data
+
+    print("________________",students)
+
+
+    row = 2 # first row is headers so data shows from 2 row 
+    for student in students:
+        print(student.id, student.name, student.age)
+        sheet["A" + str(row)] = student.id
+        
+        sheet["B" + str(row)] = student.name
+        
+        sheet["C" + str(row)] = student.age
+
+        row = row + 1
+
+    wb.save("students.xlsx")
+
+    return FileResponse(
+    path="students.xlsx",
+    filename="students.xlsx",
+    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+
