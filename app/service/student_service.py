@@ -4,18 +4,22 @@ from app.model.teacher_model import Teacher
 from fastapi import HTTPException
 from openpyxl import Workbook
 from fastapi.responses import FileResponse
+from config.logger import logger
 
 def create_student(db,body):
+    try:
+        db_student = Student(
+            name = body.name,
+            age = body.age
+        )
+        logger.info("creating students")
 
-    db_student = Student(
-        name = body.name,
-        age = body.age
-    )
-
-    db.add(db_student)
-    db.commit()
-
-    return db_student
+        db.add(db_student)
+        db.commit()
+        logger.info("Student created successfully")
+        return db_student
+    except Exception as e:
+        logger.error(f"Student Creation Failed : {e}")
 
 def show_students(db):
     shows_students = db.query(Student).all()

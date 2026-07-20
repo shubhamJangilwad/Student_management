@@ -1,4 +1,5 @@
 from fastapi import APIRouter , Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session 
 from app.schema.student_schema import StudentReqCreate, StudentResponse
 from database.student_database import get_db
@@ -14,6 +15,7 @@ from app.service.student_service import (create_student ,
                                      get_stu_del_exl_service)
 from app.exports.excel import stu_cou_tech_excel_service
 from app.exports.pdf import stu_cou_tech_pdf_service
+from auth import get_current_user
 
 Student_Router = APIRouter()
 
@@ -66,3 +68,13 @@ def get_stu_cou_tech_excel(db:Session = Depends(get_db)):
 @Student_Router.get("/get/stu/cou/tech/pdf")
 def get_stu_cou_tech_pdf(db:Session = Depends(get_db)):
     return stu_cou_tech_pdf_service(db)
+
+
+@Student_Router.get("/students")
+def get_student(form_data : OAuth2PasswordRequestForm = Depends ()):
+    print(form_data.username)
+    print(form_data.password)
+
+    return {
+        "message": "student list"
+    }

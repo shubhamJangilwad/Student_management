@@ -3,6 +3,8 @@ from app.model.student_model import Student
 from app.model.teacher_model import Teacher
 from fastapi import HTTPException
 
+from config.logger import logger
+
 def create_course(db,body):
 
 
@@ -17,16 +19,21 @@ def create_course(db,body):
     #      )
       
     # else:
-    db_course = Course(
-    course_name = body.course_name,
-    student_id = body.student_id,
-    teacher_id = body.teacher_id
+    try:
+        db_course = Course(
+        course_name = body.course_name,
+        student_id = body.student_id,
+        teacher_id = body.teacher_id
 
-    )
-    db.add(db_course)
-    db.commit()
+        )
+        logger.info("Course Creating")
+        db.add(db_course)
+        db.commit()
+        logger.info("Course Created Successfully")
 
-    return db_course
+        return db_course
+    except Exception as e:
+        logger.error(f"cource creation failed: {e}")
 
 def show_courses(db):
     shows_courses = db.query(Course).all()
