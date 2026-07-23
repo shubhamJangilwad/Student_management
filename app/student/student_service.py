@@ -1,0 +1,178 @@
+from app.student.student_model import Student
+from app.course.course_model import Course
+from app.teacher.teacher_model import Teacher
+from fastapi import HTTPException
+from openpyxl import Workbook
+from fastapi.responses import FileResponse
+from config.logger import logger
+
+def create_student(db,body):
+    try:
+        db_student = Student(
+            name = body.name,
+            age = body.age
+        )
+        logger.info("creating students")
+
+        db.add(db_student)
+        db.commit()
+        logger.info("Student created successfully")
+        return db_student
+    except Exception as e:
+        logger.error(f"Student Creation Failed : {e}")
+
+def show_students(db):
+    shows_students = db.query(Student).all()
+    return shows_students
+
+def get_one(db,id):
+    get_one_student = db.query(Student).filter(Student.id == id).first()
+    return get_one_student
+
+def update_student(db,id,body):
+    update_student_by_id = db.query(Student).filter(Student.id == id).first()
+    print("_____________________",update_student_by_id)
+    update_student_by_id.name = body.name,
+    update_student_by_id.age = body.age
+
+    db.commit()
+    return update_student_by_id
+
+def delete_student(db,id):
+    delete_stu_by_id = db.query(Student).filter(Student.id == id).first()
+
+    if delete_stu_by_id is None:
+        raise HTTPException(
+            status_code= 404,
+            detail= "Student not found"
+
+        )
+    db.delete(delete_stu_by_id)
+    db.commit()
+    return {
+        "message" : "student deleted successfully"
+    }
+
+def get_stu_details_service(id,db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name
+
+        ).join(
+            Course,
+            Student.id == Course.student_id
+        ).filter(Student.id == id)
+
+    )
+
+    result = query.all()
+
+    print("________________________",result)
+    responce = []
+
+    for row in result:
+        responce.append({
+            "student_name":row.name,
+            "course_name" : row.course_name
+        })
+    return responce
+
+def get_all_stu_service(db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name
+        ).outerjoin(
+            Course,
+            Student.id == Course.student_id
+        )
+    )
+    result = query.all()
+    print("________________________",result)
+    
+
+    responce = []
+    for row in result:
+        responce.append({
+            "student_name" : row.name,
+            "course_name" : row.course_name
+        })
+    return responce
+
+
+def get_stu_tea_cour_service(db):
+    query = (
+        db.query(
+            Student.name,
+            Course.course_name,
+            Teacher.teacher_name
+        ).join(
+            Course,
+            Student.id == Course.student_id
+        ).join(
+            Teacher,
+            Teacher.id == Course.teacher_id
+        )
+    )
+    result = query.all()
+
+    responce = []
+    for row in result:
+        responce.append({
+            "student_name": row.name,
+            "course_name": row.course_name,
+            "teacher_name": row.teacher_name
+        })
+    
+    return responce
+
+def get_stu_cour_service(id,db):
+    print("Service called")
+    query = db.query(Student).filter(Student.id == id).first()
+
+    print("_____________",query)
+    print(type(query))
+
+    if query is None:
+        return {"message": "student not found"}
+    
+    return {
+        "name": query.name,
+        "courses": {course.course_name for course in query.courses}
+    }
+
+def get_stu_del_exl_service(db):
+    wb = Workbook()
+    sheet = wb.active
+
+    sheet.title = "Students"
+
+    sheet["A1"] = "Id"
+    sheet["B1"] = "Name"
+    sheet["C1"] =  "Age"
+
+    students = db.query(Student).all() #it is a object that contais students data
+
+    print("________________",students)
+
+
+    row = 2 # first row is headers so data shows from 2 row 
+    for student in students:
+        print(student.id, student.name, student.age)
+        sheet["A" + str(row)] = student.id
+        
+        sheet["B" + str(row)] = student.name
+        
+        sheet["C" + str(row)] = student.age
+
+        row = row + 1
+
+    wb.save("students.xlsx")
+
+    return FileResponse(
+    path="students.xlsx",
+    filename="students.xlsx",
+    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
+

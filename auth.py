@@ -6,6 +6,8 @@ from fastapi import Depends
 SECRET_KEY = "mysecretkey"
 
 ALGORITHM = "HS256"
+
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 def create_access_token(data):

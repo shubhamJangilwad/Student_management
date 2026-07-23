@@ -1,6 +1,6 @@
 from fastapi.responses import FileResponse
 from reportlab.pdfgen import canvas 
-from app.model.student_model import Student
+from app.student.student_model import Student
 from reportlab.platypus import Table , SimpleDocTemplate , TableStyle 
 from reportlab.lib import colors
 

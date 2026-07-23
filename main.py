@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from database.student_database import Base , engine
-from app.router.student_router import Student_Router
-from app.router.course_router import Course_Router
-from app.router.teacher_router import teacher_router
-from app.router.auth_router import Login_Auth_Router
+from app.student.student_router import Student_Router
+from app.course.course_router import Course_Router
+from app.teacher.teacher_router import teacher_router
+from app.auth.auth_router import Login_Auth_Router
 
 app = FastAPI()
 

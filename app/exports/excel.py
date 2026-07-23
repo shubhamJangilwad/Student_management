@@ -1,6 +1,6 @@
 # from openpyxl import Workbook
 # from fastapi.responses import FileResponse
-from app.model.student_model import Student
+from app.student.student_model import Student
 
 from app.utils.excel_decorator import export_excel
 
