@@ -1,6 +1,7 @@
 from app.auth.user_model import User
 from fastapi import HTTPException
 from auth import create_access_token
+from app.auth.hash import hash_password , verify_password
 
 
 
@@ -9,7 +10,7 @@ def create_user(body,db):
     try:
         creating_user = User(
             username = body.username,
-            password = body.password
+            password = hash_password(body.password)
         )
 
         print("______________",creating_user.username)
@@ -22,7 +23,10 @@ def create_user(body,db):
         }
 
     except Exception as e:
-        print(e)
+        raise HTTPException(
+            status_code= 500,
+            detail=str(e)
+        )
 
 def check_user(form_data,db):
     user = db.query(User).filter(User.username == form_data.username).first()
@@ -32,10 +36,12 @@ def check_user(form_data,db):
             status_code= 401,
             detail= "UnAuthorized"
         )
-    if user.password == form_data.password:
+    if verify_password(
+        form_data.password , user.password
+    ):
         token = create_access_token(
              {
-                  "username":form_data.username
+                  "username":user.username
                   }
                 )
         return {

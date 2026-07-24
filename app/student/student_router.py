@@ -24,14 +24,16 @@ Student_Router = APIRouter()
 def add_student(body : StudentReqCreate,
                 current_user : Session = Depends(get_current_user), 
                 db : Session = Depends(get_db)):
-    return create_student(db,body,current_user)
+    return create_student(db,body)
 
 @Student_Router.get("/show/students")
 def get_students(db : Session = Depends(get_db)):
     return show_students(db)
 
 @Student_Router.get("/get/student/{id}")
-def get_student(id:int , db : Session = Depends(get_db)):
+def get_student(id:int , 
+                current_user : Session = Depends(get_current_user),
+                db : Session = Depends(get_db)):
     return get_one(db,id)
 
 @Student_Router.put("/update/student/{id}", response_model= StudentResponse)
